@@ -1,0 +1,90 @@
+use FPE
+
+create table F (cdf char(2) primary key, nmf varchar(20), cidf varchar(15))
+
+insert into F values ('F1', 'Fornecedor Hum', 'Ipu')
+insert into F values ('F2', 'Fornecedor Dois', 'Ico')
+insert into F values ('F3', 'Fornecedor Tres', 'Ico')
+insert into F values ('F4', 'Fornecedor Quatro', 'Ipu')
+insert into F values ('F5', 'Fornecedor Cinco', 'Oros')
+select * from F
+
+
+create table P (cdp char(2) primary key, nmp varchar(20), peso integer, cor varchar(15),cidp varchar(15))
+
+insert into P values ('P1', 'Produto I', 12, 'Preto','Ipu')
+insert into P values ('P2', 'Produto II', 17, 'Verde','Ico')
+insert into P values ('P3', 'Produto III', 17, 'Azul','Oros')
+insert into P values ('P4', 'Produto IV', 14, 'Preto','Ipu')
+insert into P values ('P5', 'Produto V', 12, 'Azul','Ico')
+insert into P values ('P6', 'Produto VI', 19, 'Preto','Ipu')
+select * from P
+
+
+create table E (cdf char(2), cdp char(2), qtd integer  primary key (cdf, cdp))
+
+insert into E values ('F1', 'P1', 300)
+insert into E values ('F1', 'P2', 200)
+insert into E values ('F1', 'P3', 400)
+insert into E values ('F1', 'P4', 200)
+insert into E values ('F1', 'P5', 100)
+insert into E values ('F1', 'P6', 100)
+insert into E values ('F2', 'P1', 300)
+insert into E values ('F2', 'P2', 400)
+insert into E values ('F3', 'P2', 200)
+insert into E values ('F4', 'P2', 200)
+insert into E values ('F4', 'P4', 300)
+insert into E values ('F4', 'P5', 400)
+select * from E
+
+Efetuar as consultas abaixo:
+01. exibir os dados dos fornecedores de Ipu
+
+SELECT * from F where cidf = 'Ipu'
+02. exibir os dados dos produtos que pesam mais do que 12 gramas e não são pretos
+SELECT * FROM P WHERE peso > 12 AND cor != 'Preto'
+03. exibir o nome e cor dos produtos que não são pretos
+SELECT nmp, cor FROM P WHERE cor != 'Preto'
+04. exibir o nome e peso de todas as peças leves (pesam menos que 15 gramas) em ordem decrescente de peso	
+SELECT nmp, peso FROM P WHERE peso < 15 ORDER BY peso desc
+05. exibir código e quantidade dos produtos fornecidos pelo fornecedor F1
+SELECT cdp, qtd FROM E WHERE cdf = 'F1'
+05. exibir código e quantidade dos produtos fornecidos pelo Fornecedor Hum
+SELECT distinct cdp, qtd FROM E, F WHERE nmf = 'Fornecedor Hum' AND F.cdf = E.cdf
+06. exibir o nome dos produtos fornecidos pela empresa Fornecedor Dois
+SELECT nmp FROM F, P WHERE nmf = 'Fornecedor Dois' 
+07. exibir o nome dos fornecedores que forneceram Produto II
+SELECT nmf FROM F, P WHERE nmp = 'Produto II'
+08. exibir o nome dos fornecedores de Icó que forneceram Produto II
+SELECT nmf FROM F, P, E WHERE cidf = 'Ico' AND nmp = 'Produto II' AND F.cdf = E.cdf  AND P.cdp = E.cdp 
+09. exibir o nome dos produtos  fornecidos por fornecedores de Ipu em quantidade>300 
+SELECT nmp FROM (SELECT * FROM F WHERE cidf = 'Ipu')F1, E, P WHERE F1.cdf = E.cdf AND P.cdp = E.cdp AND qtd > 300 
+10. exibir o nome e a cidade dos fornecedores que realizaram embarques em quantidades maiores que 350
+SELECT nmf, cidf FROM F, E WHERE E.qtd >350 AND F.cdf = E.cdf
+11. exibir o nome dos fornecedores que não forneceram nenhum produto
+SELECT	cdf FROM F except select cdf from E  
+12. exibir o código dos fornecedores que forneceram pelo menos um produto preto
+SELECT distinct cdf from F,P WHERE cor='preto'  
+13. exibir os nomes dos fornecedores que forneceram todos os produtos
+(select cdf, cdp from F,P except select cdf,cdp from E) 
+14. exibir os códigos dos fornecedores que forneceram pelo menos todos os produtos fornecidos pelo fornecedor F2 
+15. exibir o nome dos fornecedores da mesma cidade do Fornecedor Quatro
+16. exibir cada cidade e a sua quantidade de fornecedores
+17. exibir cada cor e a sua quantidade de produtos fornecida
+18. exibir cada produto, sua quantidade de embarques e a sua quantidade total fornecida apenas para os produtos com mais de 2 embarques
+19. exibir a cor e o peso médio dos produtos de cada cor
+20. obter todos os pares de códigos de fornecedores tais que os dois fornecedores sejam da mesma cidade
+21. exibir o nome de cada fornecedor e a sua quantidade de embarques em ordem decrescente da quantidade de embarques.
+22. exibir o nome da cada produto seguido pela sua qtde de embarques, sua quantidade total fornecida e a sua quantidade média fornecida
+
+23. incluir na tabela fornecedor uma coluna de nome dtInclusao.
+24. alterar dtInclusao 10/11/2012 para todos os fornecedores.
+25. eliminar a coluna dtInclusao.
+
+Observar o resultado da execução dos comandos abaixo:
+select cdp, qtd from E where cdf='F1'
+select cdp, qtd from E, F where e.cdf = f.cdf and nmf = 'Fornecedor Hum' 
+select * from E, F where e.cdf = f.cdf and nmf = 'Fornecedor Hum' 
+select cdp, qtd from E, F where  nmf = 'Fornecedor Hum' 
+select * from E, F where  nmf = 'Fornecedor Hum' 
+select * from E, F
